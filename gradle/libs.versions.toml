@@ -1,0 +1,47 @@
+[versions]
+kotlin = "1.9.22"
+spring = "3.2.3"
+slf4j = "2.0.12"
+log4j = "2.22.1"
+netty = "5.0.0.Alpha5"
+gson = "2.10.1"
+hikaricp = "5.1.0"
+jackson-module-kotlin = "2.16.1"
+mysql-connector-j = "8.3.0"
+kotlinx-coroutines = "1.8.0"
+reactor-kotlin-extensions = "1.2.2"
+
+[libraries]
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+jul-to-slf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
+log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
+log4j-slf4j2-impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
+netty-all = { group = "io.netty", name = "netty5-all", version.ref = "netty" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }
+mysql-connector-j = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql-connector-j" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "spring" }
+jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson-module-kotlin" }
+reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version.ref = "reactor-kotlin-extensions" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
+
+[bundles]
+netty = [
+    "netty-all"
+]
+
+spring = [
+    "spring-boot-starter-web",
+    "jackson-module-kotlin",
+    "reactor-kotlin-extensions",
+    "kotlin-reflect",
+    "kotlinx-coroutines-reactor"
+]
+
+logging = [
+    "slf4j-api",
+    "jul-to-slf4j",
+    "log4j-core",
+    "log4j-slf4j2-impl"
+]
