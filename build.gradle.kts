@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version "3.2.3"
     kotlin("jvm") version libs.versions.kotlin.get()
     kotlin("plugin.spring") version libs.versions.kotlin.get()
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
 
@@ -26,10 +27,29 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
 }
 
+gradle.taskGraph.whenReady {
+    allTasks.filterIsInstance<JavaExec>().forEach {
+        it.setExecutable(it.javaLauncher.get().executablePath.asFile.absolutePath)
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 tasks {
     withType<Test>().configureEach {
         useJUnitPlatform()
     }
+    assemble.configure {
+        dependsOn(shadowJar)
+    }
+}
+
+tasks.withType<JavaExec>().configureEach {
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
 
 kotlin {
