@@ -23,7 +23,7 @@ dependencies {
         exclude("ch.qos.logback", "logback-classic")
     }
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.11.0")
 }
 
 tasks {
