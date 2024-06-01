@@ -1,12 +1,23 @@
 package de.dasbabypixel.heating.gui
 
+import com.google.gson.JsonObject
+import de.dasbabypixel.heating.Application
+import de.dasbabypixel.heating.Clock
+import de.dasbabypixel.heating.SettingManager
+import de.dasbabypixel.heating.StateManager
+import de.dasbabypixel.heating.config.JsonConfiguration
+import de.dasbabypixel.heating.database.Database
+import de.dasbabypixel.heating.database.SqlDatabase
+import de.dasbabypixel.heating.messaging.MessagingService
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.reactive.error.ErrorAttributes
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.EventListener
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -23,11 +34,80 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.resource.ResourceUrlProvider
 import org.springframework.web.reactive.resource.ResourceWebHandler
 import reactor.core.publisher.Mono
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.createFile
+import kotlin.io.path.notExists
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 @Configuration
 class SpringConfiguration {
     @Bean
-    fun website(): LocalWebsite = LocalWebsite()
+    fun website(): LocalWebsite {
+        return LocalWebsite()
+    }
+
+    @Bean
+    fun clock(): Clock {
+        println("Query clock")
+        return Clock.system
+    }
+
+    @Bean
+    fun messagingService(): MessagingService {
+        println("Create messaging service")
+        return MessagingService()
+    }
+
+    @Bean
+    fun mysqlConfiguration(): de.dasbabypixel.heating.config.Configuration {
+        println("Create mysql configuration")
+        val configFile: Path = Paths.get("mysql.json")
+        if (configFile.notExists()) {
+            configFile.createFile().writeText(JsonConfiguration.gson.toJson(JsonObject().apply {
+                addProperty("username", "root")
+                addProperty("password", "")
+                addProperty("port", 3306)
+                addProperty("hostname", "localhost")
+                addProperty("database", "heating")
+            }))
+        }
+
+        val jsonObject: JsonObject = JsonConfiguration.gson.fromJson(configFile.readText(), JsonObject::class.java)
+        return JsonConfiguration(jsonObject)
+    }
+
+    @Bean
+    fun database(): Database {
+        println("Create database")
+        return SqlDatabase(mysqlConfiguration())
+    }
+
+    @Bean
+    fun settingsManager(): SettingManager {
+        println("Create settings manager")
+        return SettingManager(database(), messagingService(), clock())
+    }
+
+    @Bean
+    fun stateManager(): StateManager {
+        println("Create state manager")
+        return StateManager(database(), messagingService(), clock())
+    }
+
+    @Bean
+    fun application(): Application {
+        println("Create application")
+        return Application(
+            clock(), messagingService(), database(), settingsManager(), stateManager()
+        )
+    }
+}
+
+@EventListener(ApplicationReadyEvent::class)
+fun test() {
+    println("Application Ready")
 }
 
 class LocalWebsite {
@@ -82,7 +162,8 @@ class ExceptionHandler(
         val errorPropertiesMap = getErrorAttributes(
             request, ErrorAttributeOptions.defaults().including(ErrorAttributeOptions.Include.STACK_TRACE)
         )
-        return ServerResponse.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+        return ServerResponse.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(BodyInserters.fromValue<Map<String, Any>>(errorPropertiesMap))
     }
 

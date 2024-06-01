@@ -1,3 +1,6 @@
+import kotlin.io.path.createDirectories
+import kotlin.io.path.notExists
+
 plugins {
     id("org.springframework.boot") version "3.2.3"
     kotlin("jvm") version libs.versions.kotlin.get()
@@ -39,6 +42,15 @@ java {
     }
 }
 
+val createRunDir = tasks.register("createRunDir") {
+    val dir = projectDir.resolve("run").toPath()
+    doFirst {
+        if (dir.notExists()) {
+            dir.createDirectories()
+        }
+    }
+}
+
 tasks {
     withType<Test>().configureEach {
         useJUnitPlatform()
@@ -54,6 +66,11 @@ tasks.withType<JavaExec>().configureEach {
 
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.run.configure {
+    dependsOn(createRunDir)
+    workingDir("run")
 }
 
 application {

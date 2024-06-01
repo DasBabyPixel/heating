@@ -1,12 +1,32 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="de">
+
 <head>
     <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="index.js"></script>
+    <script src="register.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<p>This is a site</p>
+    <p>This is a site</p>
+    <div id="state-container">
+        <table id="state-container-table">
+            <tr>
+                <th>Name</th>
+                <th>Wert</th>
+                <th>Letztes Update</th>
+            </tr>
+        </table>
+    </div>
+    <div id="connection-lost">
+        <div class="error-box">
+            <h1>Verbindung verloren!</h1>
+            <h2>Versuche neu zu verbinden...</h2>
+        </div>
+    </div>
 </body>
+
 </html>

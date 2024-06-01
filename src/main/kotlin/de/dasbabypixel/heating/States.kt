@@ -20,6 +20,7 @@ class StateManager(
     private val clock: Clock
 ) {
     private val states = ConcurrentHashMap<String, State<out Any>>()
+    private val hooks = CopyOnWriteArrayList<(State<out Any>) -> (Unit)>()
 
     fun <T : Any> state(key: StateKey<T>): State<T> {
         @Suppress("UNCHECKED_CAST") return states.computeIfAbsent(key.name) {
@@ -29,8 +30,21 @@ class StateManager(
                 val deserialized = key.deserializer(message.message)
                 updater(deserialized)
             }
+            hooks.forEach {
+                it(state)
+            }
             return@computeIfAbsent state
         } as State<T>
+    }
+
+    /**
+     * Adds a hook into all existing and all newly created states. The hook cannot be removed
+     */
+    fun allStates(function: (State<out Any>) -> (Unit)) {
+        hooks.add(function)
+        states.values.forEach {
+            function(it)
+        }
     }
 }
 
@@ -42,7 +56,7 @@ class State<T>(
 ) {
     @Volatile
     private var stateEntry: StateEntry<T> = StateEntry(null, clock.now())
-    private val listeners = CopyOnWriteArrayList<StateUpdateListener<T>>()
+    private val listeners = CopyOnWriteArrayList<StateUpdateListener<in T>>()
     private val updaterCreated = AtomicBoolean(false)
 
     val entry: StateEntry<T>
@@ -53,7 +67,7 @@ class State<T>(
         get() = entry.timestamp
 
     fun addListener(
-        listener: StateUpdateListener<T>
+        listener: StateUpdateListener<in T>
     ) {
         listeners.add(listener)
     }
@@ -100,6 +114,13 @@ class StateKey<T>(
     val serializer: (value: T?) -> String?,
     val deserializer: (string: String?) -> T?
 ) {
+
+    init {
+        if (name.lowercase() != name) {
+            throw IllegalArgumentException("Name must be lowercase, namespaced recommended")
+        }
+    }
+
     constructor(
         name: String,
         type: StateType<T>

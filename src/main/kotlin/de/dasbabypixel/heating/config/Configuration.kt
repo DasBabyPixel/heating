@@ -1,5 +1,6 @@
 package de.dasbabypixel.heating.config
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -16,7 +17,7 @@ class JsonConfiguration(private val json: JsonObject) : Configuration {
     constructor(path: Path) : this(Files.readString(path))
 
     companion object {
-        private val gson = GsonBuilder().setPrettyPrinting().create()
+        val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     }
 
     override fun getString(name: String): String? {
