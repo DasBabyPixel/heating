@@ -30,9 +30,7 @@ class StateManager(
                 val deserialized = key.deserializer(message.message)
                 updater(deserialized)
             }
-            hooks.forEach {
-                it(state)
-            }
+            hooks.forEach { it(state) }
             return@computeIfAbsent state
         } as State<T>
     }
@@ -40,11 +38,13 @@ class StateManager(
     /**
      * Adds a hook into all existing and all newly created states. The hook cannot be removed
      */
-    fun allStates(function: (State<out Any>) -> (Unit)) {
+    fun addHook(function: (State<out Any>) -> (Unit)) {
         hooks.add(function)
-        states.values.forEach {
-            function(it)
-        }
+        allStates(function)
+    }
+
+    fun allStates(function: (State<out Any>) -> (Unit)) {
+        states.values.forEach { function(it) }
     }
 }
 

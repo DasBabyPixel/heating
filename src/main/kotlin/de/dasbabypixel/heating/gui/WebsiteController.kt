@@ -1,6 +1,7 @@
 package de.dasbabypixel.heating.gui
 
 import de.dasbabypixel.heating.Application
+import de.dasbabypixel.heating.SettingValueChangeListener
 import de.dasbabypixel.heating.State
 import de.dasbabypixel.heating.StateKey
 import de.dasbabypixel.heating.StateType
@@ -18,7 +19,6 @@ import reactor.core.publisher.FluxSink
 import reactor.core.publisher.Mono
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit.SECONDS
 
 @Controller
 class WebsiteController(
@@ -34,8 +34,7 @@ class WebsiteController(
     }
 
     init {
-        application.stateManager.allStates { state ->
-            println("Found State ${state.key.name} with value ${state.value}")
+        application.stateManager.addHook { state ->
             val l: StateUpdateListener<in Any> = StateUpdateListener { _ ->
                 val stateEntry = state.entry
                 val timestamp = stateEntry.timestamp
@@ -47,17 +46,23 @@ class WebsiteController(
                 executor.execute {
                     users.receive(StateValue(state.key.name, serialized, timestamp, state.key.frequency))
                 }
-
             }
             state.addListener(listener = l)
+        }
+        application.settingManager.addHook { setting ->
+            val key = setting.key
+            val l: SettingValueChangeListener<in Any> = SettingValueChangeListener { _ ->
+                val value = setting.value
+
+                @Suppress("UNCHECKED_CAST")
+                val serialized = (key.type.serializer as ((value: Any?) -> String))(value)
+
+                executor.execute {}
+            }
         }
         val stateKey = StateKey("test_state", StateType.DOUBLE)
         val state: State<Double> = application.stateManager.state(stateKey)
         state.update(10.toDouble())
-        executor.scheduleAtFixedRate({ // if (Math.random() < 0.01) {
-            //     state.update(state.value?.plus(1))
-            // }
-        }, 1, 1, SECONDS)
     }
 
     private fun callLogin(sink: FluxSink<Message>): User {
@@ -86,7 +91,7 @@ class WebsiteController(
     }
 
     @GetMapping("**")
-    fun websitePage(request: ServerHttpRequest): Mono<ResponseEntity<String>> {
+    fun websitePage(request: ServerHttpRequest): Mono<ResponseEntity<ByteArray>> {
         return try {
             val text = website.file(request.path.value())
             Mono.just(ResponseEntity.ok().contentType(type(request.path.value())).body(text))
@@ -108,6 +113,10 @@ class WebsiteController(
             js
         } else if (string.endsWith(".css")) {
             css
+        } else if (string.endsWith(".png")) {
+            png
+        } else if (string.endsWith(".ico")) {
+            ico
         } else {
             octet
         }
@@ -118,5 +127,7 @@ class WebsiteController(
         private val js = MediaType("text", "javascript")
         private val css = MediaType("text", "css")
         private val html = MediaType.TEXT_HTML
+        private val png = MediaType("image", "png")
+        private val ico = MediaType("image", "x-icon")
     }
 }

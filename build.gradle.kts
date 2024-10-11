@@ -19,7 +19,7 @@ repositories {
 dependencies {
     implementation(libs.bundles.logging)
     implementation(libs.bundles.netty)
-    implementation(libs.gson)
+    @Suppress("PackageUpdate") implementation(libs.gson)
     implementation(libs.hikaricp)
     implementation(libs.mysql.connector.j)
     implementation(libs.bundles.spring) {

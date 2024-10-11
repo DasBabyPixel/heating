@@ -9,6 +9,7 @@ import de.dasbabypixel.heating.config.JsonConfiguration
 import de.dasbabypixel.heating.database.Database
 import de.dasbabypixel.heating.database.SqlDatabase
 import de.dasbabypixel.heating.messaging.MessagingService
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.web.WebProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -50,19 +51,16 @@ class SpringConfiguration {
 
     @Bean
     fun clock(): Clock {
-        println("Query clock")
         return Clock.system
     }
 
     @Bean
     fun messagingService(): MessagingService {
-        println("Create messaging service")
         return MessagingService()
     }
 
     @Bean
     fun mysqlConfiguration(): de.dasbabypixel.heating.config.Configuration {
-        println("Create mysql configuration")
         val configFile: Path = Paths.get("mysql.json")
         if (configFile.notExists()) {
             configFile.createFile().writeText(JsonConfiguration.gson.toJson(JsonObject().apply {
@@ -80,43 +78,38 @@ class SpringConfiguration {
 
     @Bean
     fun database(): Database {
-        println("Create database")
         return SqlDatabase(mysqlConfiguration())
     }
 
     @Bean
     fun settingsManager(): SettingManager {
-        println("Create settings manager")
         return SettingManager(database(), messagingService(), clock())
     }
 
     @Bean
     fun stateManager(): StateManager {
-        println("Create state manager")
         return StateManager(database(), messagingService(), clock())
     }
 
     @Bean
     fun application(): Application {
-        println("Create application")
         return Application(
             clock(), messagingService(), database(), settingsManager(), stateManager()
         )
     }
 }
 
-@EventListener(ApplicationReadyEvent::class)
-fun test() {
-    println("Application Ready")
-}
-
 class LocalWebsite {
-    fun file(path: String): String {
+    @EventListener(ApplicationReadyEvent::class)
+    fun test() {
+        LoggerFactory.getLogger(javaClass).info("Application Ready")
+    }
+
+    fun file(path: String): ByteArray {
         val resource = javaClass.classLoader.getResource("website$path") ?: throw HttpClientErrorException(
             HttpStatusCode.valueOf(404)
         )
-        val text = resource.readText()
-        return text
+        return resource.readBytes()
     }
 }
 

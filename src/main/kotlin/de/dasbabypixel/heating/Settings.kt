@@ -24,6 +24,7 @@ class SettingManager(
     private val clock: Clock
 ) {
     private val settings = ConcurrentHashMap<String, Setting<out Any>>()
+    private val hooks = CopyOnWriteArrayList<(Setting<out Any>) -> (Unit)>()
 
     fun <T : Any> setting(
         key: SettingKey<T>
@@ -36,7 +37,6 @@ class SettingManager(
                 return@compute setting
             }
 
-            @Suppress("NAME_SHADOWING")
             val setting = Setting(database, clock, messagingService, key)
             val value = setting.settingValue
             logger.debug("Created Setting {} (value={})", name, value.value)
@@ -74,6 +74,15 @@ class SettingManager(
         val newValue = key.defaultValue()
         updater(newValue)
         database.setting(key.name, key.type.serializer(newValue))
+    }
+
+    fun addHook(function: (Setting<out Any>) -> (Unit)) {
+        hooks.add(function)
+        allSettings(function)
+    }
+
+    fun allSettings(function: (Setting<out Any>) -> (Unit)) {
+        settings.values.forEach { function(it) }
     }
 }
 

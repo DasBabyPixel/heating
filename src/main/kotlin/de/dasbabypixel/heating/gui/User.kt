@@ -34,7 +34,7 @@ class UserManager : MessageReceiver {
         users.add(user)
         userByToken[token] = user
         userById[id] = user
-        logger.info("User with ID $id created")
+        logger.debug("User with ID $id created")
         return user
     }
 
@@ -42,7 +42,7 @@ class UserManager : MessageReceiver {
         if (users.remove(user)) {
             userByToken.remove(user.token)
             userById.remove(user.id)
-            logger.info("User with ID ${user.id} logged out")
+            logger.debug("User with ID ${user.id} logged out")
         }
     }
 

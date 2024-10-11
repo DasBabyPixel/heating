@@ -33,3 +33,9 @@ class SensorValue(
 ) : Message {
     override val type = "sensor_value"
 }
+
+class SettingValue(
+    val settingName: String
+) : Message {
+    override val type: String = "setting_value"
+}
