@@ -4,5 +4,10 @@
 /.gradle
 /bin
 /run
-/src/main/frontend
+/src/main/frontend/generated
 /.kotlin
+/node-modules
+/package.json
+/package-lock.json
+/tsconfig.json
+/types.d.ts

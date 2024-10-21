@@ -1,7 +1,11 @@
 package de.dasbabypixel.heating.gui
 
+import com.vaadin.flow.component.Tag
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.dependency.JsModule
+import com.vaadin.flow.component.dependency.NpmPackage
 import com.vaadin.flow.component.html.Div
+import com.vaadin.flow.component.littemplate.LitTemplate
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -35,5 +39,14 @@ class VaadinTest : VerticalLayout() {
 
         mainLayout.add(tabs, content)
         add(mainLayout)
+
+        add(TestGui())
     }
+}
+
+@Tag("hello-world")
+@NpmPackage(value = "@axa-ch/input-text", version = "4.3.11")
+@JsModule("./src/hello-world.ts")
+class TestGui : LitTemplate(){
+
 }
