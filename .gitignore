@@ -6,8 +6,8 @@
 /run
 /src/main/frontend/generated
 /.kotlin
-/node-modules
 /package.json
 /package-lock.json
 /tsconfig.json
 /types.d.ts
+/node_modules/
