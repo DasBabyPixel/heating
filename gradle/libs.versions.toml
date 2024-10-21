@@ -3,20 +3,21 @@ kotlin = "2.0.0"
 spring = "3.3.0"
 slf4j = "2.0.13"
 log4j = "2.22.1"
-netty = "5.0.0.Alpha5"
+#netty = "5.0.0.Alpha5"
 gson = "2.11.0"
 hikaricp = "5.1.0"
 jackson-module-kotlin = "2.17.1"
 mysql-connector-j = "8.4.0"
 kotlinx-coroutines = "1.8.1"
 reactor-kotlin-extensions = "1.2.2"
+vaadin = "24.5.0"
 
 [libraries]
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 jul-to-slf4j = { group = "org.slf4j", name = "jul-to-slf4j", version.ref = "slf4j" }
 log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
 log4j-slf4j2-impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
-netty-all = { group = "io.netty", name = "netty5-all", version.ref = "netty" }
+#netty-all = { group = "io.netty", name = "netty5-all", version.ref = "netty" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }
 mysql-connector-j = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql-connector-j" }
@@ -25,18 +26,25 @@ jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackso
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version.ref = "reactor-kotlin-extensions" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 kotlinx-coroutines-reactor = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
+vaadin-spring-boot-starter = { group = "com.vaadin", name = "vaadin-spring-boot-starter", version.ref = "vaadin" }
+jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotation-api", version = "2.1.1" }
+#spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa", version.ref = "spring" }
+
 
 [bundles]
-netty = [
-    "netty-all"
-]
+#netty = [
+#    "netty-all"
+#]
 
 spring = [
-    "spring-boot-starter-webflux",
+    #    "spring-boot-starter-webflux",
     "jackson-module-kotlin",
     "reactor-kotlin-extensions",
     "kotlin-reflect",
-    "kotlinx-coroutines-reactor"
+    "kotlinx-coroutines-reactor",
+    "vaadin-spring-boot-starter",
+    "jakarta-annotation-api"
+    #    "spring-boot-starter-data-jpa"
 ]
 
 logging = [
@@ -45,3 +53,6 @@ logging = [
     "log4j-core",
     "log4j-slf4j2-impl"
 ]
+
+[plugins]
+vaadin = { id = "com.vaadin", version.ref = "vaadin" }

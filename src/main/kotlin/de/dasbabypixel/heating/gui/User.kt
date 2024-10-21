@@ -13,7 +13,7 @@ class User(
     val sink: FluxSink<Message>
 ) : MessageReceiver {
     override fun receive(message: Message) {
-        sink.next(message)
+        // sink.next(message)
     }
 }
 

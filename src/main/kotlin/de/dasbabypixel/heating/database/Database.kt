@@ -1,34 +1,32 @@
 package de.dasbabypixel.heating.database
 
-import de.dasbabypixel.heating.Setting
 import de.dasbabypixel.heating.State
 import de.dasbabypixel.heating.sensor.Sensor
 import de.dasbabypixel.heating.sensor.SensorEntry
+import de.dasbabypixel.heating.settings.Setting
 import java.time.Instant
 
 interface Database {
-    /**
-     * Whether the given setting is known to the database
-     */
-    fun knowsSetting(
-        name: String
-    ): Boolean
-
-    /**
-     * Query the value of a setting
-     */
-    fun setting(
-        name: String
-    ): String?
-
     /**
      * Set the value of a setting.
      * Use null to remove the value
      */
     fun setting(
+        profile: String,
         name: String,
         value: String?
     )
+
+    fun profilesAndParents(): Map<String, Collection<String>>
+
+    fun parents(
+        profile: String,
+        parents: Collection<String>
+    )
+
+    fun settingsByName(
+        name: String
+    ): Map<String, String>
 
     fun logSensor(
         sensor: Sensor,
@@ -37,6 +35,7 @@ interface Database {
 
     fun <T> logSettingValue(
         setting: Setting<T>,
+        profile: String,
         value: T?,
         timestamp: Instant
     )

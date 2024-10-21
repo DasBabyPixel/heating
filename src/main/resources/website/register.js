@@ -9,21 +9,35 @@ function hideConnectionLost() {
 }
 
 export function register(message) {
-    console.log("Connecting...");
-    const source = new EventSource("/register");
+    registerInternal(message, true)
+}
+
+function registerInternal(message, originalConnection) {
+    if(originalConnection) {
+        console.log("Connecting...");
+    }
+
+    const source = new EventSource("/api/register");
+
+    let printMessages = originalConnection
 
     // Reconnect if the connection fails
     source.onerror = () => {
-        console.log("Disconnected.");
-        console.log("State: " + source.readyState);
+        if (printMessages)
+            console.log("Disconnected.");
         connected = false;
         showConnectionLost();
-        console.log("Reconnecting...");
+        if (printMessages)
+            console.log("Reconnecting...");
         source.close();
-        setTimeout(() => register(message), 1000);
+        setTimeout(() => registerInternal(message, false), 1000);
     }
 
     source.onopen = () => {
+        printMessages = true
+        if (!originalConnection) {
+            console.log("Reconnected.")
+        }
         connected = true
         hideConnectionLost();
     }

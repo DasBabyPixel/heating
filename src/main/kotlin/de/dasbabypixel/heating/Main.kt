@@ -1,12 +1,18 @@
 package de.dasbabypixel.heating
 
+import org.slf4j.bridge.SLF4JBridgeHandler
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 
 fun main() {
+    SLF4JBridgeHandler.removeHandlersForRootLogger()
+    SLF4JBridgeHandler.install()
+    Runtime.getRuntime().addShutdownHook(Thread {
+        println("Shutdown initiated")
+    })
+
     SpringApplication.run(DemoApplication::class.java)
 }
 
-@SpringBootApplication(exclude = [ErrorMvcAutoConfiguration::class])
+@SpringBootApplication
 class DemoApplication

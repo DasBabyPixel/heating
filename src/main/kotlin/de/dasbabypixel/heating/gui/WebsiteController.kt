@@ -1,22 +1,14 @@
 package de.dasbabypixel.heating.gui
 
 import de.dasbabypixel.heating.Application
-import de.dasbabypixel.heating.SettingValueChangeListener
 import de.dasbabypixel.heating.State
-import de.dasbabypixel.heating.StateKey
-import de.dasbabypixel.heating.StateType
-import de.dasbabypixel.heating.StateUpdateListener
+import de.dasbabypixel.heating.StateEntry
+import de.dasbabypixel.heating.settings.Setting
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.reactive.result.view.RedirectView
-import reactor.core.publisher.Flux
 import reactor.core.publisher.FluxSink
-import reactor.core.publisher.Mono
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 
@@ -34,50 +26,69 @@ class WebsiteController(
     }
 
     init {
+        for (i in 0 until 100) {
+            println(1)
+        }
         application.stateManager.addHook { state ->
-            val l: StateUpdateListener<in Any> = StateUpdateListener { _ ->
-                val stateEntry = state.entry
-                val timestamp = stateEntry.timestamp
-                val value = stateEntry.value
-
-                @Suppress("UNCHECKED_CAST")
-                val serialized = (state.key.serializer as ((value: Any?) -> String))(value)
-
-                executor.execute {
-                    users.receive(StateValue(state.key.name, serialized, timestamp, state.key.frequency))
-                }
+            state.addListener { _ ->
+                val update = createStateUpdate(state)
+                executor.execute { users.receive(update) }
             }
-            state.addListener(listener = l)
+            val update = createStateUpdate(state)
+            executor.execute { users.receive(update) }
         }
-        application.settingManager.addHook { setting ->
-            val key = setting.key
-            val l: SettingValueChangeListener<in Any> = SettingValueChangeListener { _ ->
-                val value = setting.value
-
-                @Suppress("UNCHECKED_CAST")
-                val serialized = (key.type.serializer as ((value: Any?) -> String))(value)
-
-                executor.execute {}
+        @Suppress("UNCHECKED_CAST") application.settingManager.addHook { setting ->
+            (setting as Setting<Any>).addListener { profile, newValue ->
+                val update = createSettingUpdate(setting, profile, newValue)
+                executor.execute { users.receive(update) }
             }
+            val update = createSettingUpdate(setting)
+            executor.execute { users.receive(update) }
         }
-        val stateKey = StateKey("test_state", StateType.DOUBLE)
-        val state: State<Double> = application.stateManager.state(stateKey)
-        state.update(10.toDouble())
     }
 
-    private fun callLogin(sink: FluxSink<Message>): User {
+    @Suppress("UNCHECKED_CAST")
+    private fun createSettingUpdate(
+        setting: Setting<*>,
+        profile: String = setting.settingManager.activeProfile,
+        value: Any? = setting.value(profile)
+    ): SettingValue {
+        return SettingValue(
+            setting.key.name, profile, (setting.key.type.serializer as ((value: Any?) -> String))(value)
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun createStateUpdate(
+        state: State<*>,
+        stateEntry: StateEntry<out Any?> = state.entry
+    ): StateValue {
+        @Suppress("UNCHECKED_CAST")
+        val serialized = (state.key.serializer as ((value: Any?) -> String))(stateEntry.value)
+        return StateValue(state.key.name, serialized, stateEntry.timestamp, state.key.frequency)
+    }
+
+    fun callLogin(sink: FluxSink<Message>): User {
+        println("Login")
         val user = users.createUser(sink)
         executor.execute {
             users.receive(UserLogin(user))
-            application.stateManager.allStates { state ->
-                val stateEntry = state.entry
-
-                @Suppress("UNCHECKED_CAST")
-                val serialized = (state.key.serializer as ((value: Any?) -> String))(stateEntry.value)
-                user.receive(StateValue(state.key.name, serialized, stateEntry.timestamp, state.key.frequency))
+            application.stateManager.allStates {
+                val update = createStateUpdate(it)
+                user.receive(update)
+            }
+            application.settingManager.allSettings {
+                val update = createSettingUpdate(it)
+                user.receive(update)
             }
         }
-        sink.onCancel { callLogout(user) }
+        sink.onCancel {
+            println("Logout")
+            callLogout(user)
+        }
+        sink.onDispose {
+            println("Dispose")
+        }
         return user
     }
 
@@ -85,26 +96,28 @@ class WebsiteController(
         users.deleteUser(user)
     }
 
-    @GetMapping("")
-    fun defaultPage(): RedirectView {
-        return RedirectView("index.html")
-    }
-
-    @GetMapping("**")
-    fun websitePage(request: ServerHttpRequest): Mono<ResponseEntity<ByteArray>> {
-        return try {
-            val text = website.file(request.path.value())
-            Mono.just(ResponseEntity.ok().contentType(type(request.path.value())).body(text))
-        } catch (exception: HttpClientErrorException) {
-            Mono.error(exception)
-        }
-    }
-
+    @GetMapping("settings", produces = ["text/html"])
     @ResponseBody
-    @GetMapping("/register", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun register(): Flux<Message> {
-        return Flux.create { callLogin(it) }
+    fun settings(): String {
+        return "Test"
     }
+
+    //
+    // @GetMapping("")
+    // fun defaultPage(): RedirectView {
+    //     return RedirectView("index.html")
+    // }
+    //
+    // @GetMapping("**")
+    // fun websitePage(request: ServerHttpRequest): Mono<ResponseEntity<ByteArray>> {
+    //     return try {
+    //         val path = request.path.value()
+    //         val text = if (path.endsWith("/")) website.file(path + "index.html") else website.file(path)
+    //         Mono.just(ResponseEntity.ok().contentType(type(path)).body(text))
+    //     } catch (exception: HttpClientErrorException) {
+    //         Mono.error(exception)
+    //     }
+    // }
 
     private fun type(string: String): MediaType {
         return if (string.endsWith(".html")) {
@@ -117,6 +130,8 @@ class WebsiteController(
             png
         } else if (string.endsWith(".ico")) {
             ico
+        } else if (string.endsWith("/")) {
+            html
         } else {
             octet
         }

@@ -2,9 +2,11 @@ package de.dasbabypixel.heating
 
 import de.dasbabypixel.heating.config.JsonConfiguration
 import de.dasbabypixel.heating.database.SqlDatabase
-import de.dasbabypixel.heating.messaging.MessagingService
 import de.dasbabypixel.heating.sensor.Sensor
 import de.dasbabypixel.heating.sensor.SensorEntry
+import de.dasbabypixel.heating.settings.SettingKey
+import de.dasbabypixel.heating.settings.SettingManager
+import de.dasbabypixel.heating.settings.SettingType
 import java.time.Instant
 import kotlin.test.Test
 
@@ -13,9 +15,8 @@ class SQLDatabaseTest {
     fun test() {
         val database = SqlDatabase(JsonConfiguration(javaClass.classLoader.getResource("mysql.json")!!.readText()))
         val clock = Clock.system
-        val messagingService = MessagingService()
-        val settingManager = SettingManager(database, messagingService, clock)
-        val stateManager = StateManager(database, messagingService, clock)
+        val settingManager = SettingManager(database, clock)
+        val stateManager = StateManager(database, clock)
         val sensor = Sensor(stateManager, database, "innen")
         val entry = SensorEntry(15.4, Instant.now())
         database.logSensor(sensor, entry)

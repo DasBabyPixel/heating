@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version libs.versions.kotlin.get()
     kotlin("plugin.spring") version libs.versions.kotlin.get()
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.vaadin)
     application
 }
 
@@ -17,8 +18,9 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
     implementation(libs.bundles.logging)
-    implementation(libs.bundles.netty)
+    // implementation(libs.bundles.netty)
     @Suppress("PackageUpdate") implementation(libs.gson)
     implementation(libs.hikaricp)
     implementation(libs.mysql.connector.j)
@@ -62,13 +64,16 @@ tasks {
 
 tasks.withType<JavaExec>().configureEach {
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
+    standardInput = System.`in`
+    standardOutput = System.out
+    errorOutput = System.err
 }
 
 kotlin {
     jvmToolchain(21)
 }
 
-tasks.run.configure {
+tasks.bootRun.configure {
     dependsOn(createRunDir)
     workingDir("run")
 }

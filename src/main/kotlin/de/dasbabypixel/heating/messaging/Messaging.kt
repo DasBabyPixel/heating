@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 private val logger = LoggerFactory.getLogger("Messaging")
 
+@Deprecated("Maybe stupid idea, idk yet")
 class MessagingService {
     private val listeners: MutableMap<Int, MutableList<MessageListener>> = ConcurrentHashMap()
 

@@ -1,7 +1,9 @@
 package de.dasbabypixel.heating
 
 import de.dasbabypixel.heating.database.Database
-import de.dasbabypixel.heating.messaging.MessagingService
+import de.dasbabypixel.heating.settings.SettingKey
+import de.dasbabypixel.heating.settings.SettingManager
+import de.dasbabypixel.heating.settings.SettingType
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -13,18 +15,16 @@ class SettingsTest {
     @Test
     fun testSettings() {
         val database = mock(Database::class.java)
-        `when`(database.knowsSetting(anyString())).thenReturn(true)
-        `when`(database.setting(anyString())).thenReturn("testValueRet")
+        `when`(database.settingsByName(anyString())).thenReturn(mapOf("default" to "testValueRet"))
 
-        val messagingService = MessagingService()
         val clock = Clock.system
-        val manager = SettingManager(database, messagingService, clock)
+        val manager = SettingManager(database, clock)
         val settingKey = SettingKey("keyTest", SettingType.STRING)
         val setting = manager.setting(settingKey)
 
-        assertEquals(setting.value, "testValueRet")
+        assertEquals("testValueRet", setting.value)
         setting.update("test22")
-        assertEquals(setting.value, "test22")
+        assertEquals("test22", setting.value)
         setting.update(null)
         assertNull(setting.value)
 
