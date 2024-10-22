@@ -6,8 +6,8 @@
 /run
 /src/main/frontend/generated
 /.kotlin
-/package.json
-/package-lock.json
-/tsconfig.json
-/types.d.ts
 /node_modules/
+/vite.generated.ts
+/webpack.generated.js
+/.npmrc
+/pnpmfile.js
