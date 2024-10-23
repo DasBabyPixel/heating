@@ -102,9 +102,9 @@
     "@polymer/polymer": "$@polymer/polymer",
     "react": "$react",
     "date-fns": "$date-fns",
-    "@axa-ch/input-text": "$@axa-ch/input-text",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
-    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles"
+    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
+    "@axa-ch/input-text": "$@axa-ch/input-text"
   }
 }
