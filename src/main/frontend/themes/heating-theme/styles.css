@@ -1,0 +1,14 @@
+[theme~="dark"] {
+    --lumo-base-color: hsl(220, 15%, 15%);
+    --lumo-shade-5pct: rgba(54, 61, 73, 0.05);
+    --lumo-shade-10pct: rgba(54, 61, 73, 0.1);
+    --lumo-shade-20pct: rgba(54, 61, 73, 0.2);
+    --lumo-shade-30pct: rgba(54, 61, 73, 0.3);
+    --lumo-shade-40pct: rgba(54, 61, 73, 0.4);
+    --lumo-shade-50pct: rgba(54, 61, 73, 0.5);
+    --lumo-shade-60pct: rgba(54, 61, 73, 0.6);
+    --lumo-shade-70pct: rgba(54, 61, 73, 0.7);
+    --lumo-shade-80pct: rgba(54, 61, 73, 0.8);
+    --lumo-shade-90pct: rgba(54, 61, 73, 0.9);
+    --lumo-shade: hsl(220, 15%, 25%);
+}

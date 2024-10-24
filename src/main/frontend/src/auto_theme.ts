@@ -1,5 +1,8 @@
+const light = "light"
+const dark = "dark"
+
 function applyOSAutoTheme() {
-    const theme: string = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const theme: string = window.matchMedia("(prefers-color-scheme: dark)").matches ? dark : light;
     let t = currentTheme()
     if (t == null) {
         setTheme(theme, false)
@@ -11,12 +14,12 @@ function applyOSAutoTheme() {
 function heating_toggleTheme() {
     const theme = currentTheme()
     if (theme == null) {
-        const theme: string = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark";
+        const theme: string = window.matchMedia("(prefers-color-scheme: dark)").matches ? light : dark;
         setTheme(theme)
-    } else if (theme == "light") {
-        setTheme("dark")
-    } else if (theme == "dark") {
-        setTheme("light")
+    } else if (theme == light) {
+        setTheme(dark)
+    } else if (theme == dark) {
+        setTheme(light)
     }
 }
 

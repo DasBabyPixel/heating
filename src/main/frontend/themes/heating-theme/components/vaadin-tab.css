@@ -1,0 +1,4 @@
+:host([orientation="horizontal"].heating_settings) {
+    margin-inline-start: auto;
+    margin-inline-end: 0;
+}

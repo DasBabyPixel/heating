@@ -11,3 +11,4 @@
 /webpack.generated.js
 /.npmrc
 /pnpmfile.js
+/.vaadin-node-tasks.lock
