@@ -190,7 +190,7 @@ class SettingKey<T>(
     val type: SettingType<T>,
     val defaultValue: () -> T? = { null },
 ) {
-    companion object {
+    companion object    {
         val COOLDOWN_SENSOR_AFTER_PUMP_START = SettingKey("cooldown_sensor_after_pump_start_seconds", SettingType.INT)
         val LEGIONELLA_KILL_INTERVAL_HOURS = SettingKey("legionella_kill_interval_hours", SettingType.INT)
         val LEGIONELLA_KILL_TEMPERATURE_CELSIUS = SettingKey("legionella_kill_temperature_celsius", SettingType.INT)

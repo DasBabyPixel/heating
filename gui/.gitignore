@@ -1,0 +1,8 @@
+/node_modules
+/vite.generated.ts
+/webpack.generated.js
+/.npmrc
+/pnpmfile.js
+/.vaadin-node-tasks.lock
+/build
+/src/main/frontend/generated

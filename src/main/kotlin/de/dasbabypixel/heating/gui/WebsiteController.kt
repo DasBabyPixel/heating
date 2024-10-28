@@ -96,12 +96,6 @@ class WebsiteController(
         users.deleteUser(user)
     }
 
-    @GetMapping("settings", produces = ["text/html"])
-    @ResponseBody
-    fun settings(): String {
-        return "Test"
-    }
-
     //
     // @GetMapping("")
     // fun defaultPage(): RedirectView {

@@ -38,12 +38,11 @@ jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotat
 #]
 
 spring = [
-    #    "spring-boot-starter-webflux",
+#    "spring-boot-starter-webflux",
     "jackson-module-kotlin",
     "reactor-kotlin-extensions",
     "kotlin-reflect",
     "kotlinx-coroutines-reactor",
-    "vaadin-spring-boot-starter",
     "jakarta-annotation-api",
     "spring-boot-devtools"
     #    "spring-boot-starter-data-jpa"
@@ -58,3 +57,7 @@ logging = [
 
 [plugins]
 vaadin = { id = "com.vaadin", version.ref = "vaadin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spring = { id = "org.springframework.boot", version = "3.2.3" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
