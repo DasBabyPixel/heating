@@ -15,12 +15,16 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.router.RouterLayout
 import com.vaadin.flow.router.RouterLink
+import com.vaadin.flow.server.auth.AnonymousAllowed
 import com.vaadin.flow.theme.lumo.LumoIcon
 
+@AnonymousAllowed
 @PageTitle("Heizung")
 @Route("")
 @JsModule("./src/auto_theme.ts")
-class NavbarGui : AppLayout(), RouterLayout, BeforeEnterObserver {
+class NavbarGui : AppLayout(),
+    RouterLayout,
+    BeforeEnterObserver {
     private val theme: Button = Button()
 
     init {
@@ -51,7 +55,8 @@ class NavbarGui : AppLayout(), RouterLayout, BeforeEnterObserver {
         }
     }
 
-    private class RouteTabs : Tabs(), BeforeEnterObserver {
+    private class RouteTabs : Tabs(),
+        BeforeEnterObserver {
         private val routerLinkTabMap = HashMap<RouterLink, Tab>()
 
         fun add(routerLink: RouterLink): Tab {

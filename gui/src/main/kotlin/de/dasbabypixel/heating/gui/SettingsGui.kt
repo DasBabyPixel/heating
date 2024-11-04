@@ -12,10 +12,13 @@ import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.OptionalParameter
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import jakarta.annotation.security.RolesAllowed
 
+@RolesAllowed("ADMIN")
 @PageTitle("Heizung | Einstellungen")
 @Route("settings", layout = NavbarGui::class)
-class SettingsGui : Div(), HasUrlParameter<String> {
+class SettingsGui : Div(),
+    HasUrlParameter<String> {
     private val tabs = Tabs()
 
     init {
@@ -30,7 +33,8 @@ class SettingsGui : Div(), HasUrlParameter<String> {
 
     override fun setParameter(
         event: BeforeEvent,
-        @OptionalParameter parameter: String?
+        @OptionalParameter
+        parameter: String?
     ) {
         if (parameter == null) {
             event.forwardTo(javaClass, "default")

@@ -22,6 +22,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }
 mysql-connector-j = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql-connector-j" }
 spring-boot-starter-webflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux", version.ref = "spring" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security", version.ref = "spring" }
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "spring" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson-module-kotlin" }
 reactor-kotlin-extensions = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions", version.ref = "reactor-kotlin-extensions" }
@@ -38,13 +39,14 @@ jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotat
 #]
 
 spring = [
-#    "spring-boot-starter-webflux",
+    #    "spring-boot-starter-webflux",
     "jackson-module-kotlin",
     "reactor-kotlin-extensions",
     "kotlin-reflect",
     "kotlinx-coroutines-reactor",
     "jakarta-annotation-api",
-    "spring-boot-devtools"
+    "spring-boot-devtools",
+    "spring-boot-starter-security"
     #    "spring-boot-starter-data-jpa"
 ]
 
