@@ -21,10 +21,10 @@ class LoginGui : VerticalLayout(),
     init {
         addClassName("login-view")
         setSizeFull()
-        // style.setFlexGrow("1")
         style.setAlignItems(ACENTER)
         style.setJustifyContent(JCENTER)
         login.action = "login"
+        login.isForgotPasswordButtonVisible = false
 
         add(H1("Heizung"), login)
     }

@@ -17,6 +17,11 @@ import org.springframework.stereotype.Component
 @Configuration
 class SecurityConfig : VaadinWebSecurity() {
 
+    companion object {
+        const val ROLE_ADMIN = "ADMIN"
+        const val ROLE_USER = "USER"
+    }
+
     override fun configure(http: HttpSecurity) {
         super.configure(http)
         setLoginView(http, LoginGui::class.java)
@@ -27,12 +32,12 @@ class SecurityConfig : VaadinWebSecurity() {
         val user = User.builder()
             .username("user")
             .password("{bcrypt}\$2a\$12\$BhfjUwjfaRjoe/6Lw.gV.OUaguQN7Dns1R5UghUgl69aafyD72JSW")
-            .roles("USER")
+            .roles(ROLE_USER)
             .build()
         val admin = User.builder()
             .username("admin")
             .password("{bcrypt}\$2a\$12\$BhfjUwjfaRjoe/6Lw.gV.OUaguQN7Dns1R5UghUgl69aafyD72JSW")
-            .roles("USER", "ADMIN")
+            .roles(ROLE_USER, ROLE_ADMIN)
             .build()
         return InMemoryUserDetailsManager(user, admin) // return InMemoryUserDetailsManager(user)
     }
