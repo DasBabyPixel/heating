@@ -30,7 +30,7 @@ dependencies {
         exclude("ch.qos.logback", "logback-classic")
     }
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly(libs.spring.boot.devtools)
 
     "standaloneImplementation"(sourceSets.main.map { it.output })
 }
@@ -54,6 +54,10 @@ val createRunDir = tasks.register("createRunDir") {
 tasks {
     assemble {
         dependsOn(shadowJar)
+    }
+    bootJar {
+        from(standalone.map { it.output })
+        mainClass = "de.dasbabypixel.heating.gui.MainKt"
     }
     bootRun {
         dependsOn(createRunDir)

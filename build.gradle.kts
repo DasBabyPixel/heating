@@ -33,7 +33,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.mockito:mockito-core:5.11.0")
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly(libs.spring.boot.devtools)
 }
 
 gradle.taskGraph.whenReady {
