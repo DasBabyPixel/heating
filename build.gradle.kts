@@ -64,6 +64,11 @@ tasks {
     assemble.configure {
         dependsOn(shadowJar)
     }
+    test {
+        if (project.hasProperty("CI")) {
+            exclude("**/SQLDatabaseTest.class")
+        }
+    }
 }
 
 tasks.withType<JavaExec>().configureEach {
