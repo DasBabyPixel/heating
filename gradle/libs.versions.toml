@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.0.0"
 spring = "3.3.0"
-slf4j = "2.0.13"
+slf4j = "2.0.16"
 log4j = "2.22.1"
 #netty = "5.0.0.Alpha5"
 gson = "2.11.0"
