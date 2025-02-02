@@ -10,7 +10,7 @@ jackson-module-kotlin = "2.18.2"
 mysql-connector-j = "8.4.0"
 kotlinx-coroutines = "1.10.1"
 reactor-kotlin-extensions = "1.2.3"
-vaadin = "24.5.0"
+vaadin = "24.6.4"
 
 [libraries]
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
