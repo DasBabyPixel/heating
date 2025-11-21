@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.10"
+kotlin = "2.2.21"
 spring = "3.4.3"
 slf4j = "2.0.17"
 log4j = "2.24.3"
