@@ -2,7 +2,7 @@
 kotlin = "2.2.21"
 spring = "3.4.3"
 slf4j = "2.0.17"
-log4j = "2.24.3"
+log4j = "2.25.2"
 #netty = "5.0.0.Alpha5"
 gson = "2.13.2"
 hikaricp = "5.1.0"
