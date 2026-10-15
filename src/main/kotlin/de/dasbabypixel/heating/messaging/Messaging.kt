@@ -11,7 +11,6 @@ private val logger = LoggerFactory.getLogger("Messaging")
 class MessagingService {
     private val listeners: MutableMap<Int, MutableList<MessageListener>> = ConcurrentHashMap()
 
-    @OptIn(ExperimentalStdlibApi::class)
     internal fun receiveMessage(
         frequency: Int,
         message: Message

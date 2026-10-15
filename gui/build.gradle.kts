@@ -2,15 +2,22 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.notExists
 
 plugins {
-    alias(libs.plugins.spring)
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.shadow)
-    alias(libs.plugins.vaadin)
 }
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+kotlin {
+    jvmToolchain(25)
 }
 
 val standalone = sourceSets.register("standalone")
@@ -20,25 +27,19 @@ configurations.named("standaloneImplementation") {
 }
 
 dependencies {
-    implementation(libs.bundles.logging)
-    implementation(libs.bundles.spring) {
-        exclude("org.apache.logging.log4j", "log4j-to-slf4j")
-        exclude("ch.qos.logback", "logback-classic")
-    }
-    implementation(libs.vaadin.spring.boot.starter) {
-        exclude("org.apache.logging.log4j", "log4j-to-slf4j")
-        exclude("ch.qos.logback", "logback-classic")
-    }
+    implementation("org.apache.commons:commons-math3:3.6.1")
+    implementation(libs.bundles.logging) // implementation(libs.bundles.spring) {
+    //     exclude("org.apache.logging.log4j", "log4j-to-slf4j")
+    //     exclude("ch.qos.logback", "logback-classic")
+    // }
+    // implementation(libs.vaadin.spring.boot.starter) {
+    //     exclude("org.apache.logging.log4j", "log4j-to-slf4j")
+    //     exclude("ch.qos.logback", "logback-classic")
+    // }
 
-    developmentOnly(libs.spring.boot.devtools)
+    // developmentOnly(libs.spring.boot.devtools)
 
     "standaloneImplementation"(sourceSets.main.map { it.output })
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
 }
 
 val createRunDir = tasks.register("createRunDir") {
@@ -55,11 +56,8 @@ tasks {
     assemble {
         dependsOn(shadowJar)
     }
-    bootJar {
-        from(standalone.map { it.output })
-        mainClass = "de.dasbabypixel.heating.gui.MainKt"
-    }
-    bootRun {
+    register<JavaExec>("run") {
+        description = "Runs the GUI with default (Dev) config"
         dependsOn(createRunDir)
         workingDir(createRunDir.map { it.outputs.files.singleFile })
         mainClass = "de.dasbabypixel.heating.gui.MainKt"

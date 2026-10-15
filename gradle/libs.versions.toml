@@ -61,4 +61,4 @@ vaadin = { id = "com.vaadin", version.ref = "vaadin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 spring = { id = "org.springframework.boot", version.ref = "spring" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+shadow = { id = "com.gradleup.shadow", version = "9.0.0" }
