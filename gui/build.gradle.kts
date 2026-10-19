@@ -27,7 +27,6 @@ configurations.named("standaloneImplementation") {
 }
 
 dependencies {
-    implementation("org.apache.commons:commons-math3:3.6.1")
     implementation(libs.bundles.logging) // implementation(libs.bundles.spring) {
     //     exclude("org.apache.logging.log4j", "log4j-to-slf4j")
     //     exclude("ch.qos.logback", "logback-classic")
@@ -52,9 +51,71 @@ val createRunDir = tasks.register("createRunDir") {
     }
 }
 
+abstract class GenerateResourceIndexTask : DefaultTask() {
+    @get:InputDirectory
+    abstract val resourceRoot: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @get:Input
+    abstract val targetPackage: Property<String>
+
+    @TaskAction
+    fun generate() {
+        val root = resourceRoot.get().asFile
+        val out = outputDir.get().asFile
+        out.listFiles().forEach {
+            it.deleteRecursively()
+        }
+
+        val todo = ArrayList<File>()
+        todo.addLast(root)
+        while (todo.isNotEmpty()) {
+            val file = todo.removeLast()
+            val index = file.list()
+            val relative = file.relativeTo(root).toString()
+            println("$relative: ${index.contentToString()}")
+            out.resolve(relative).also { it.mkdirs() }.resolve("index.json").also { it.createNewFile() }
+                .bufferedWriter().use { writer ->
+                    writer.write("[")
+                    index.forEachIndexed { v, it ->
+                        if (v != 0) writer.write(",")
+                        writer.write("\n  \"")
+                        writer.write(it)
+                        writer.write("\"")
+                    }
+                    writer.write("\n]")
+                }
+            index.forEach { name ->
+                val otherFile = file.resolve(name)
+                if (otherFile.isDirectory) {
+                    todo.add(otherFile)
+                }
+            }
+
+        }
+    }
+}
+
+val generateResourceIndex = tasks.register<GenerateResourceIndexTask>("generateResourceIndex") {
+    resourceRoot.set(layout.projectDirectory.dir("src/main/resources"))
+    targetPackage.set("com.example.mypackage")
+    outputDir.set(layout.buildDirectory.dir("generated/resources/resourceIndex"))
+}
+
+sourceSets.main {
+    resources.srcDir(generateResourceIndex.map { it.outputDir })
+}
+
 tasks {
     assemble {
         dependsOn(shadowJar)
+    }
+    shadowJar {
+        manifest {
+            attributes("Main-Class" to "de.dasbabypixel.heating.gui.MainKt")
+        }
     }
     register<JavaExec>("run") {
         description = "Runs the GUI with default (Dev) config"

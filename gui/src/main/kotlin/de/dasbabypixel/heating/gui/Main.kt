@@ -12,6 +12,35 @@ fun main() {
         val host: InetAddress? = null
         val port = 8041
         val server = GuiWebServer(host, port)
+        Gui::class.java.let {
+            it.getResource("/assets/web")!!.let { url ->
+                url.openConnection().let { con ->
+                    println(con)
+                    println(con.contentType)
+                }
+            }
+
+            it.module.layer.configuration().findModule(it.module.name).orElseThrow().let { res ->
+                res.reference().let { ref ->
+                    ref.open().use { reader ->
+                        reader.list().forEach {
+                            println(it)
+                        }
+                    }
+                }
+            }
+
+
+            println(it.getResource("/assets/web"))
+            println(it.getResource("/assets/web/"))
+            println(it.getResource("/assets/web/favicon.ico"))
+            println(it.getResource("assets/web/favicon.ico"))
+            println(it.getResource("assets/web"))
+            println(it.getResource("assets/web/"))
+            println(it.classLoader.getResource("/assets/web"))
+            println(it.classLoader.getResource("/assets/web/"))
+            println(it.classLoader.getResource("/assets/web/favicon.ico"))
+        }
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
                 Gui.logger.info("Shutting down...")

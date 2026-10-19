@@ -37,7 +37,7 @@ class SessionManager {
                 return null
             }
             Uuid.fromByteArray(sessionIdBytes)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

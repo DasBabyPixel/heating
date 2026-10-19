@@ -11,21 +11,42 @@ class GuiWebServer {
     private var started = false
 
     constructor(
-        host: InetAddress?,
-        port: Int
+        host: InetAddress?, port: Int
     ) {
         server = HttpServer.create(InetSocketAddress(host, port), 0)
         server.executor = Executors.newVirtualThreadPerTaskExecutor()
 
         server.createContext("/") { exchange ->
-            val path = exchange.requestURI.path
+            try {
+                val path = exchange.requestURI.path
 
-            val uuid = TokenAuthFilter.get(exchange)
+                val uuid = TokenAuthFilter.get(exchange)
 
+                if (path.startsWith("/")) {
+                    val asset = JarAssets.loadWeb(path.substring(1))
+                    if (asset == null) {
+                        exchange.responseHeaders.set("Content-Type", "text/plain; charset=utf-8")
+                        exchange.sendResponseHeaders(404, 0)
+                        exchange.responseBody.use { it.write("404 not found \"$path\"".toByteArray()) }
+                        return@createContext
+                    }
 
-            exchange.responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
-            exchange.sendResponseHeaders(200, 6)
-            exchange.responseBody.use { it.write("Hello!".toByteArray()) }
+                    exchange.responseHeaders.set("Content-Type", MimeTypeUtil.forPath(path))
+                    exchange.sendResponseHeaders(200, 0)
+                    exchange.responseBody.use { output ->
+                        asset.openStream().use { input ->
+                            input.transferTo(output)
+                        }
+                    }
+
+                } else {
+                    exchange.responseHeaders.set("Content-Type", "text/plain; charset=utf-8");
+                    exchange.sendResponseHeaders(400, 0)
+                    exchange.responseBody.use { it.write("Bad request for\"$path\"!".toByteArray()) }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }.also {
             it.filters.add(CookieExtractingFilter())
             it.filters.add(TokenAuthFilter(sessionManager, "Session"))
