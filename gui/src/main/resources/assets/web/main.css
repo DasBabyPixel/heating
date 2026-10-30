@@ -1,0 +1,24 @@
+body {
+    font-family: system-ui, sans-serif;
+    background: #f4f4f9;
+    padding: 2rem;
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+}
+
+.metric {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+/* Enable native browser smooth transitions for live DOM shifts */
+@view-transition {
+    navigation: auto;
+}

@@ -1,3 +1,64 @@
-<html>
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Heating Login</title>
+    <link href="login.css" rel="stylesheet">
+</head>
+
+<body>
 <h1>Login</h1>
+
+<form id="login-form">
+    <div class="form-group">
+        <label for="username">Username:</label><br>
+        <input id="username" name="username" type="text"><br>
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label><br>
+        <input id="password" name="password" type="text"><br>
+    </div>
+    <div class="error-text" id="error-message" style="display:none; color: #d9534f; margin-bottom:1rem;"></div>
+    <input id="submit-btn" type="submit" value="Login">
+</form>
+
+<script src="login.js"></script>
+<!--<div class="card">-->
+<!--    <h3>Live Server Metric</h3>-->
+<!--    &lt;!&ndash; The live-updating target &ndash;&gt;-->
+<!--    <div class="metric" id="live-metric">Connecting...</div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Native ES module: No bundler, no compilation delay &ndash;&gt;-->
+<!--<script type="module">-->
+<!--    const metricEl = document.getElementById('live-metric');-->
+
+<!--    // Connect to native HTTP SSE endpoint-->
+<!--    const eventSource = new EventSource('/api/stream');-->
+
+<!--    eventSource.onmessage = (event) => {-->
+<!--        const data = JSON.parse(event.data);-->
+
+<!--        // Use the native View Transitions API for buttery-smooth visual updates-->
+<!--        // if (document.startViewTransition) {-->
+<!--        //     document.startViewTransition(() => {-->
+<!--        //         updateView(data);-->
+<!--        //     });-->
+<!--        // } else {-->
+<!--        updateView(data);-->
+<!--        // }-->
+<!--    };-->
+
+<!--    function updateView(data) {-->
+<!--        metricEl.textContent = `${data.count} | Time: ${data.time}`;-->
+<!--        metricEl.style.color = data.maxValueReached ? '#dc2626' : '#2563eb';-->
+<!--    }-->
+
+<!--    eventSource.onerror = () => {-->
+<!--        metricEl.textContent = "Reconnecting...";-->
+<!--        metricEl.style.color = "#9ca3af";-->
+<!--    };-->
+<!--</script>-->
+
+</body>
 </html>

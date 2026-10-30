@@ -38,6 +38,12 @@ dependencies {
 
     // developmentOnly(libs.spring.boot.devtools)
 
+    implementation("org.eclipse.jetty:jetty-server:12.1.14")
+    implementation("org.eclipse.jetty.ee10:jetty-ee10-servlet:12.1.14")
+    implementation("com.github.spullara.mustache.java:compiler:0.9.14")
+    implementation("com.auth0:java-jwt:4.6.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
+
     "standaloneImplementation"(sourceSets.main.map { it.output })
 }
 
@@ -76,16 +82,12 @@ abstract class GenerateResourceIndexTask : DefaultTask() {
             val index = file.list()
             val relative = file.relativeTo(root).toString()
             println("$relative: ${index.contentToString()}")
-            out.resolve(relative).also { it.mkdirs() }.resolve("index.json").also { it.createNewFile() }
+            out.resolve(relative).also { it.mkdirs() }.resolve(".index.dat").also { it.createNewFile() }
                 .bufferedWriter().use { writer ->
-                    writer.write("[")
-                    index.forEachIndexed { v, it ->
-                        if (v != 0) writer.write(",")
-                        writer.write("\n  \"")
+                    index.forEach {
                         writer.write(it)
-                        writer.write("\"")
+                        writer.write("\n")
                     }
-                    writer.write("\n]")
                 }
             index.forEach { name ->
                 val otherFile = file.resolve(name)
